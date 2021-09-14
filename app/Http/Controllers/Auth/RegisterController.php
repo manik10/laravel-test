@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\JWTAuth;
 
 class RegisterController extends Controller
 {
@@ -38,10 +39,10 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(JWTAuth $auth)
     {
-        /*$this->middleware('guest');
-        $this->auth = $auth;*/
+        /*$this->middleware('guest');*/
+        $this->auth = $auth;
     }
 
     /**
