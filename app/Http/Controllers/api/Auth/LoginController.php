@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\JWTAuth;
 
 class LoginController extends Controller
 {
@@ -26,15 +29,46 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = "";
+    protected $auth;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(JWTAuth $auth)
     {
-        $this->middleware('guest')->except('logout');
+        $this->auth = $auth; 
+    }
+
+    public function login(Request $request)
+    {
+        try{
+            if(!$token = $this->auth->attempt($request->only('email','password'))){
+                return response()->json([
+                    'success' => false,
+                    'errors' => [
+                        'email'=>[
+                            "Invalid email address or password"
+                        ]
+                    ]
+                ], 403);
+            }
+        }catch(JWTException $e){
+            return response()->json([
+                'success' => false,
+                'errors' => [
+                    'email'=>[
+                        "Invalid email address or password"
+                    ]
+                ]
+            ], 403);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $request->user(),
+            'token' => $token
+        ], 200);
     }
 }

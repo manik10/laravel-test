@@ -9,7 +9,8 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\JWTAuth; 
+use Tymon\JWTAuth\JWTAuth;
+
 
 class RegisterController extends Controller
 {
@@ -31,7 +32,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = "";
     protected $auth;
 
     /**
@@ -41,7 +42,6 @@ class RegisterController extends Controller
      */
     public function __construct(JWTAuth $auth)
     {
-        /*$this->middleware('guest');*/
         $this->auth = $auth;
     }
 
@@ -56,15 +56,7 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-    }
-    protected function validatorapi($data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8'],
         ]);
     }
 
@@ -82,25 +74,6 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
-    public function register(Request $request){
-       
-        /*return 'works'.$request['name'];
-        $validator = $this->validator($request->all());
-        if(!$validator->fails()){*/
-            $data['name'] = $request['name'];
-            $data['email'] = $request['email'];
-            $data['password'] = $request['password'];
-            $this->validatorapi($data);
-            return User::create([
-                'name' => $request['name'],
-                'email' => $request['email'],
-                'password' => Hash::make($request['password']),
-            ]);
-       /* }else{
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->error()
-            ]);
-        }*/
-    }
+
+   
 }
